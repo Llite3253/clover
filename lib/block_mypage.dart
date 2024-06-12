@@ -15,32 +15,35 @@ class block_chain_mypage extends StatefulWidget {
 class _block_chain_mypage extends State<block_chain_mypage> {
   String result = "No data";
 
-  var fromAddress_Controller = TextEditingController();
-  var payeeAddress_Controller = TextEditingController();
-  var amount_Controller = TextEditingController();
+  var ethereumAddress = TextEditingController();
 
-  String? Amount;
-  String? Payment_time;
-  String? Remaining_time;
-  int? Remaining_time_days;
-  int? Remaining_time_hours;
-  int? Remaining_time_minutes;
-  int? Remaining_time_seconds;
+  String? ethereum;
+  String? sent_ethereum;
+  String? received_ethereum;
+  String? finish_ethereum;
 
-  Future<void> makePayment() async {
+  void getEther() {
+    getBalance();
+    viewTotalPaymentsByPayer();
+    viewPaymentsByPayee();
+    viewCompletedPaymentsByPayee();
+  }
+
+  Future<void> getBalance() async {
     try {
       final response = await http.post(
-        Uri.parse(API.host + '/makePayment'),
+        Uri.parse(API.host + '/getBalance'),
         body: jsonEncode({
-          'fromAddress' : fromAddress_Controller.text.trim(),
-          'payeeAddress': payeeAddress_Controller.text.trim(),
-          'amount' : amount_Controller.text.trim(),
+          'ethereumAddress' : ethereumAddress.text.trim(),
         }),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        double balance = double.parse(jsonResponse['balance']);
+        String formattedBalance = balance.toStringAsFixed(2);
         setState(() {
-          result = "Payment made successfully: ${response.body}";
+          ethereum = formattedBalance as String?;
         });
       } else {
         setState(() {
@@ -54,19 +57,21 @@ class _block_chain_mypage extends State<block_chain_mypage> {
     }
   }
 
-  Future<void> completePayment() async {
+  Future<void> viewTotalPaymentsByPayer() async {
     try {
       final response = await http.post(
-        Uri.parse(API.host + '/completePayment'),
+        Uri.parse(API.host + '/viewTotalPaymentsByPayer'),
         body: jsonEncode({
-          'fromAddress' : fromAddress_Controller.text.trim(),
-          'payeeAddress': payeeAddress_Controller.text.trim(),
+          'ethereumAddress' : ethereumAddress.text.trim(),
         }),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        double ether = double.parse(jsonResponse['ether']);
+        String formattedEther = ether.toStringAsFixed(2);
         setState(() {
-          result = "Payment made successfully: ${response.body}";
+          sent_ethereum = formattedEther as String?;
         });
       } else {
         setState(() {
@@ -80,58 +85,85 @@ class _block_chain_mypage extends State<block_chain_mypage> {
     }
   }
 
-  Future<void> viewPayment() async {
+  Future<void> viewPaymentsByPayee() async {
     try {
       final response = await http.post(
-        Uri.parse(API.host + '/getViewPayment'),
+        Uri.parse(API.host + '/viewPaymentsByPayee'),
         body: jsonEncode({
-          'payerAddress': fromAddress_Controller.text.trim(),
-          'payeeAddress': payeeAddress_Controller.text.trim(),
+          'ethereumAddress' : ethereumAddress.text.trim(),
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        double ether = double.parse(jsonResponse['ether']);
+        String formattedEther = ether.toStringAsFixed(2);
+        setState(() {
+          received_ethereum = formattedEther as String?;
+        });
+      } else {
+        setState(() {
+          result = "Failed to make payment: ${response.body}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        result = "Error: $e";
+      });
+    }
+  }
+
+  Future<void> viewCompletedPaymentsByPayee() async {
+    try {
+      final response = await http.post(
+        Uri.parse(API.host + '/viewCompletedPaymentsByPayee'),
+        body: jsonEncode({
+          'ethereumAddress' : ethereumAddress.text.trim(),
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        double ether = double.parse(jsonResponse['ether']);
+        String formattedEther = ether.toStringAsFixed(2);
+        setState(() {
+          finish_ethereum = formattedEther as String?;
+        });
+      } else {
+        setState(() {
+          result = "Failed to make payment: ${response.body}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        result = "Error: $e";
+      });
+    }
+  }
+
+  Future<void> receivePayment() async {
+    try {
+      final response = await http.post(
+        Uri.parse(API.host + '/receivePayment'),
+        body: jsonEncode({
+          'payeeAddress' : ethereumAddress.text.trim(),
+          'payerAddress' : '0xE13FB373B1824C18a31A8Aa20699254419BC7102',
         }),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
         setState(() {
-          Amount = jsonResponse['viewPendingPayment']['amount'];
-          Payment_time = jsonResponse['viewPaymentTimestamp'];
-          Remaining_time_days = jsonResponse['viewRemainingTime']['days'];
-          Remaining_time_hours = jsonResponse['viewRemainingTime']['hours'];
-          Remaining_time_minutes = jsonResponse['viewRemainingTime']['minutes'];
-          Remaining_time_seconds = jsonResponse['viewRemainingTime']['seconds'];
+          print(jsonResponse['result']);
+        });
+      } else {
+        setState(() {
+          result = "Failed to make payment: ${response.body}";
         });
       }
     } catch (e) {
-      print(123);
       setState(() {
-        Amount = null;
-        Payment_time = null;
-        Remaining_time_days = null;
-        Remaining_time_hours = null;
-        Remaining_time_minutes = null;
-        Remaining_time_seconds = null;
-      });
-    }
-  }
-
-  Future<void> getView() async {
-    try {
-      final response = await http.post(
-        Uri.parse(API.host + '/getView'),
-        body: jsonEncode({
-          'payerAddress': fromAddress_Controller.text.trim(),
-        }),
-        headers: {'Content-Type': 'application/json'},
-      );
-    } catch(e) {
-      setState(() {
-      print(123);
-        Amount = null;
-        Payment_time = null;
-        Remaining_time_days = null;
-        Remaining_time_hours = null;
-        Remaining_time_minutes = null;
-        Remaining_time_seconds = null;
+        result = "Error: $e";
       });
     }
   }
@@ -150,10 +182,25 @@ class _block_chain_mypage extends State<block_chain_mypage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(Amount != null ? "보류된 이더 : $Amount ETH" : "보류된 이더 : 0 ETH"),
-            Text(Payment_time != null ? "결제된 날짜 : $Payment_time" : ""),
-            Text(Remaining_time_seconds != null ? "보류 기간 까지 | $Remaining_time_days 일 "
-                "$Remaining_time_hours 시 $Remaining_time_minutes 분 $Remaining_time_seconds 초 | 남았습니다." : ""),
+            TextFormField(
+              controller: ethereumAddress,
+              decoration: const InputDecoration(
+                labelText: '자신 주소',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () { getEther(); },
+              child: Text('확인'),
+            ),
+            ElevatedButton(
+              onPressed: () { receivePayment(); },
+              child: Text('체크'),
+            ),
+            SizedBox(height: 20),
+            Text(ethereum != null ? "보유 이더 : $ethereum ETH" : "보유 이더 : 0 ETH"),
+            Text(sent_ethereum != null ? "보류중인 보낸 이더 : $sent_ethereum ETH" : "보류중인 보낸 이더 : 0 ETH"),
+            Text(received_ethereum != null ? "보류중인 받은 이더 : $received_ethereum ETH" : "보류중인 받은 이더 : 0 ETH"),
           ],
         ),
       ),

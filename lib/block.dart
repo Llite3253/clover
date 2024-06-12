@@ -54,30 +54,10 @@ class _block_chain extends State<block_chain> {
     }
   }
 
-  Future<void> releasePayment() async {
-    final url = Uri.parse(API.host + '/releasePayment');
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        setState(() {
-          result = "Payment released successfully: ${response.body}";
-        });
-      } else {
-        setState(() {
-          result = "Failed to release payment: ${response.body}";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        result = "Error: $e";
-      });
-    }
-  }
-
-  Future<void> completePayment() async {
+  Future<void> sendPayment() async {
     try {
       final response = await http.post(
-        Uri.parse(API.host + '/completePayment'),
+        Uri.parse(API.host + '/sendPayment'),
         body: jsonEncode({
           'fromAddress' : fromAddress_Controller.text.trim(),
           'payeeAddress': payeeAddress_Controller.text.trim(),
@@ -105,6 +85,7 @@ class _block_chain extends State<block_chain> {
       final response = await http.post(
         Uri.parse(API.host + '/getViewPayment'),
         body: jsonEncode({
+          'payerAddress': fromAddress_Controller.text.trim(),
           'payeeAddress': payeeAddress_Controller.text.trim(),
         }),
         headers: {'Content-Type': 'application/json'},
@@ -121,7 +102,6 @@ class _block_chain extends State<block_chain> {
         });
       }
     } catch (e) {
-      print(123);
       setState(() {
         Amount = null;
         Payment_time = null;
@@ -132,8 +112,6 @@ class _block_chain extends State<block_chain> {
       });
     }
   }
-
-  // Similarly, you can add methods for completePayment and cancelPayment
 
   @override
   Widget build(BuildContext context) {
@@ -176,17 +154,13 @@ class _block_chain extends State<block_chain> {
               child: Text('결제'),
             ),
             ElevatedButton(
-              onPressed: releasePayment,
-              child: Text('취소'),
+              onPressed: () { sendPayment(); },
+              child: Text('보내기'),
             ),
             ElevatedButton(
-              onPressed: () { completePayment(); },
-              child: Text('보내기'),
-            ),ElevatedButton(
               onPressed: () { viewPayment(); },
               child: Text('확인'),
             ),
-            // Similarly, add buttons for completePayment and cancelPayment
             SizedBox(height: 20),
             Text(Amount != null ? "보류된 이더 : $Amount ETH" : "보류된 이더 : 0 ETH"),
             Text(Payment_time != null ? "결제된 날짜 : $Payment_time" : ""),

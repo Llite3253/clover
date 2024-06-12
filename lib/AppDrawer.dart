@@ -54,6 +54,12 @@ class AppDrawer extends StatelessWidget {
               Navigator.pushReplacementNamed (context, '/block');
             },
           ),
+          ListTile(
+            title: const Text('블록체인 마이페이지'),
+            onTap: () {
+              Navigator.pushReplacementNamed (context, '/block_mypage');
+            },
+          ),
         ],
       ),
     );
