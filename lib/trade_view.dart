@@ -7,19 +7,22 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'community_update.dart';
 
-class CommunityPage_view extends StatefulWidget {
-  const CommunityPage_view({Key? key, required this.boardKey}) : super(key: key);
+class TradePage_view extends StatefulWidget {
+  const TradePage_view({Key? key, required this.itemKey}) : super(key: key);
 
-  final int boardKey;
+  final int itemKey;
 
   @override
-  State<CommunityPage_view> createState() => _CommunityPage_view();
+  State<TradePage_view> createState() => _TradePage_view();
 }
 
-class _CommunityPage_view extends State<CommunityPage_view> {
+class _TradePage_view extends State<TradePage_view> {
   final FlutterSecureStorage storage = FlutterSecureStorage();
-  late Future<void> _communityViewPostsFuture;
+  late Future<void> _tradeViewPostsFuture;
+  int? v_itemKey;
   String? title;
+  String? name;
+  int? price;
   String? content;
   String? rdate;
   String? amous;
@@ -31,20 +34,23 @@ class _CommunityPage_view extends State<CommunityPage_view> {
   void initState() {
     super.initState();
     tokenCheck();
-    _communityViewPostsFuture = CommunityViewPosts(widget.boardKey);
+    _tradeViewPostsFuture = t_view(widget.itemKey);
   }
 
-  Future<void> CommunityViewPosts(int boardKey) async {
+  Future<void> t_view(int itemKey) async {
     final response = await http.post(
-      Uri.parse(API.host + '/c_view'),
-      body: json.encode({'boardKey': boardKey}),
+      Uri.parse(API.host + '/t_view'),
+      body: json.encode({'itemKey': itemKey}),
       headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 201) {
       var jsonResponse = json.decode(response.body);
       setState(() {
+        v_itemKey = jsonResponse['result']['itemKey'];
         title = jsonResponse['result']['title'];
+        name = jsonResponse['result']['name'];
+        price = jsonResponse['result']['price'];
         content = jsonResponse['result']['content'];
         rdate = jsonResponse['result']['rdate'];
         amous = jsonResponse['result']['amous'];
@@ -129,7 +135,7 @@ class _CommunityPage_view extends State<CommunityPage_view> {
     try {
       final response = await http.post(
         Uri.parse(API.host + '/c_delete'),
-        body: json.encode({'boardKey': widget.boardKey}),
+        body: json.encode({'boardKey': widget.itemKey}),
         headers: {'Content-Type': 'application/json'},
       );
 
@@ -142,12 +148,34 @@ class _CommunityPage_view extends State<CommunityPage_view> {
     }
   }
 
+  void trade() async {
+    try {
+      final response = await http.post(
+        Uri.parse(API.host + '/t_trade'),
+        body: json.encode({
+          'custNum': custNum,
+          'v_custNum': v_custNum,
+          'price': price,
+          'itemKey': v_itemKey.toString()
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(msg: '구입하였습니다.');
+        Navigator.pushReplacementNamed(context, '/trade');
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: '다시 시도해주세요.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("커뮤니티", style: TextStyle(color: Colors.white)),
+        title: const Text("중고 거래", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blueAccent,
         actions: <Widget>[
           PopupMenuButton<String>(
@@ -159,7 +187,7 @@ class _CommunityPage_view extends State<CommunityPage_view> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CommunityPage_update(boardKey: widget.boardKey),
+                    builder: (context) => CommunityPage_update(boardKey: widget.itemKey),
                   ),
                 );
               } else if(value == '삭제') {
@@ -187,7 +215,7 @@ class _CommunityPage_view extends State<CommunityPage_view> {
         ],
       ),
       body: FutureBuilder<void>(
-        future: _communityViewPostsFuture,
+        future: _tradeViewPostsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -198,6 +226,7 @@ class _CommunityPage_view extends State<CommunityPage_view> {
               child: Text('오류 발생: ${snapshot.error}'),
             );
           } else {
+            print(snapshot);
             return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.all(16),
@@ -245,27 +274,75 @@ class _CommunityPage_view extends State<CommunityPage_view> {
                   SizedBox(height: 15),
                   Text(
                     '${title}',
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold
                     ),
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
+                  Text(
+                    '상품명 : ${name}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  Text(
+                    '가격 : ${price} ETH',
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
                   Text(
                     '${content}',
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 18,
                     ),
                   ),
                   if (image1 != null && image1!.isNotEmpty)
-                    Image.network(API.host + '/' + image1!),
-
+                    Container(
+                      width: 400, // 원하는 너비
+                      height: 400, // 원하는 높이
+                      child: Image.network(
+                        '${API.host}/$image1',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ],
                 ),
               ),
             );
-          };
+          }
         }
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 0),
+        child: SizedBox(
+          width: 100,
+          height: 50,
+          child: FloatingActionButton(
+            backgroundColor: Colors.blueAccent,
+            onPressed: () {
+              trade();
+            },
+            child: Row(
+              children: [
+                SizedBox(width: 8),
+                Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white, // 아이콘 색을 흰색으로 변경
+                ),
+                Expanded( // 텍스트를 버튼의 남은 공간에 맞추기 위해 Expanded 사용
+                  child: Text(
+                    ' 구입하기',
+                    style: TextStyle(color: Colors.white), // 텍스트 색을 흰색으로 변경
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

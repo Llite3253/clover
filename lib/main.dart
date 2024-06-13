@@ -1,4 +1,7 @@
 import 'package:clover/block_mypage.dart';
+import 'package:clover/trade_received.dart';
+import 'package:clover/trade_sent.dart';
+import 'package:clover/trade_write.dart';
 import 'package:flutter/material.dart';
 import 'package:clover/main_page.dart';
 import 'package:clover/login.dart';
@@ -27,6 +30,9 @@ class MyApp extends StatelessWidget {
         '/id' : (context) => const StudentIdPage(),
         '/signup' : (context) => const SignUpPage(),
         '/trade' : (context) => const TradePage(),
+        '/trade_write' : (context) => const TradePage_write(),
+        '/trade_sent' : (context) => const TradePage_sent(),
+        '/trade_received' : (context) => const TradePage_received(),
         '/comunity' : (context) => const CommunityPage(),
         '/reserve' : (context) => const ReservePage(),
         '/comunity_write' : (context) => const CommunityPage_write(),

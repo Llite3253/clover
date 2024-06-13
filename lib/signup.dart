@@ -21,6 +21,7 @@ class SignupScreen extends State<SignUpPage> {
   var university_Controller = TextEditingController();
   var classOf_Controller = TextEditingController();
   var email_Controller = TextEditingController();
+  var wallet_Controller = TextEditingController();
 
   register() async {
     if (id_Controller.text.trim() == "") {
@@ -59,6 +60,10 @@ class SignupScreen extends State<SignUpPage> {
       Fluttertoast.showToast(msg: '유효한 이메일을 입력해주세요.');
       return;
     }
+    if (wallet_Controller.text.trim() == "") {
+      Fluttertoast.showToast(msg: '지갑 주소를 입력해주세요.');
+      return;
+    }
 
     final res = await http.post(
       Uri.parse(API.host + "/register"),
@@ -70,6 +75,7 @@ class SignupScreen extends State<SignUpPage> {
         'university': university_Controller.text.trim(),
         'class_of': classOf_Controller.text.trim(),
         'email': email_Controller.text.trim(),
+        'wallet': wallet_Controller.text.trim(),
       }),
     );
     if (res.statusCode == 201) {
@@ -171,6 +177,17 @@ class SignupScreen extends State<SignUpPage> {
                     decoration: InputDecoration(
                       filled: true,
                       labelText: '이메일',
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  width: 300.0,
+                  child: TextFormField(
+                    controller: wallet_Controller,
+                    decoration: InputDecoration(
+                      filled: true,
+                      labelText: '지갑주소',
                     ),
                   ),
                 ),
