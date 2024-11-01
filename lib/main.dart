@@ -1,4 +1,5 @@
 import 'package:clover/block_mypage.dart';
+import 'package:clover/payment.dart';
 import 'package:clover/trade_received.dart';
 import 'package:clover/trade_sent.dart';
 import 'package:clover/trade_write.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/comunity_write' : (context) => const CommunityPage_write(),
         '/block' : (context) => const block_chain(),
         '/block_mypage' : (context) => const block_chain_mypage(),
+        '/payment' : (context) => const payment(),
       },
     );
   }

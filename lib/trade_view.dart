@@ -326,7 +326,7 @@ class _TradePage_view extends State<TradePage_view> {
             onPressed: () {
               trade();
             },
-            child: Row(
+            child: const Row(
               children: [
                 SizedBox(width: 8),
                 Icon(

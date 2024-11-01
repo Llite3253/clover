@@ -60,6 +60,12 @@ class AppDrawer extends StatelessWidget {
               Navigator.pushReplacementNamed (context, '/block_mypage');
             },
           ),
+          ListTile(
+            title: const Text('결제 내역'),
+            onTap: () {
+              Navigator.pushReplacementNamed (context, '/payment');
+            },
+          ),
         ],
       ),
     );

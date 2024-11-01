@@ -250,13 +250,13 @@ class _block_chain_mypage extends State<block_chain_mypage> {
               ),
             ),
             Text(
-              sent_ethereum != null ? "보류중인 보낸 이더 : $sent_ethereum ETH" : "보유 이더 : 0 ETH",
+              sent_ethereum != null ? "보류중인 보낸 이더 : $sent_ethereum ETH" : "보류중인 보낸 이더 : 0 ETH",
               style: const TextStyle(
                 fontSize: 25,
               ),
             ),
             Text(
-              received_ethereum != null ? "보류중인 받은 이더 : $received_ethereum ETH" : "보유 이더 : 0 ETH",
+              received_ethereum != null ? "보류중인 받은 이더 : $received_ethereum ETH" : "보류중인 보낸 이더 : 0 ETH",
               style: const TextStyle(
                 fontSize: 25,
               ),

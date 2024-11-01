@@ -214,7 +214,7 @@ class _TradePage_received extends State<TradePage_received> {
   }
 
   Widget _buildCommunityPost(int itemKey, int custNum, String title,
-      String name, String image1, String content,
+      String name, String? image1, String content,
       int price, String rdate, String amous, String sendCustNum,
       int remainingTime_days, int remainingTime_hours, remainingTime_minutes, remainingTime_seconds) {
     return GestureDetector(
