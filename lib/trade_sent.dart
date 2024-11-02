@@ -232,95 +232,107 @@ class _TradePage_sent extends State<TradePage_sent> {
           color: Colors.grey[100],
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            Row(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            "상품명 : " + name,
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            "가격 : " + price.toString() + " ETH",
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          FutureBuilder<String>(
+                            future: custNumFind(custNum),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Text(
+                                  "판매자 : ${snapshot.data}",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                );
+                              } else if (snapshot.hasError) {
+                                return const Text(
+                                  "구매자 정보 불러오기 실패",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.red,
+                                  ),
+                                );
+                              } else {
+                                return const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            remainingTime_days == 0 && remainingTime_hours == 0 && remainingTime_minutes == 0 && remainingTime_seconds == 0
+                                ? "남은 보류 기간 : 보류 기간이 끝났습니다."
+                                : "남은 보류 기간 : $remainingTime_days 일 $remainingTime_hours 시 $remainingTime_minutes 분 $remainingTime_seconds 초\n남았습니다.",
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 5),
-                      Text(
-                        "상품명 : " + name,
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        "가격 : " + price.toString() + " ETH",
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                      FutureBuilder<String>(
-                        future: custNumFind(custNum),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Text(
-                              "판매자 : ${snapshot.data}",
-                              style: const TextStyle(
-                                fontSize: 14,
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return const Text(
-                              "구매자 정보 불러오기 실패",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.red,
-                              ),
-                            );
-                          } else {
-                            return const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        remainingTime_days == 0 && remainingTime_hours == 0 && remainingTime_minutes == 0 && remainingTime_seconds == 0
-                            ? "남은 보류 기간 : 보류 기간이 끝났습니다."
-                            : "남은 보류 기간 : $remainingTime_days 일 $remainingTime_hours 시 $remainingTime_minutes 분 $remainingTime_seconds 초\n남았습니다.",
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (image1 != null && image1.isNotEmpty)
-                  Container(
-                    width: 90, // 원하는 너비
-                    height: 90, // 원하는 높이
-                    margin: const EdgeInsets.only(left: 10), // 왼쪽에 여백 추가
-                    child: Image.network(
-                      '${API.host}/$image1',
-                      fit: BoxFit.cover,
                     ),
-                  ),
+                    if (image1 != null && image1.isNotEmpty)
+                      Container(
+                        width: 90,
+                        height: 90,
+                        margin: const EdgeInsets.only(left: 10),
+                        child: Image.network(
+                          '${API.host}/$image1',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        showErrorDialog("신고가 접수되었습니다.");
+                      },
+                      child: Text('신고'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        t_trade_sendPayment(custNum);
+                      },
+                      child: Text('보류중인 이더 보내기'),
+                    ),
+                  ],
+                ),
               ],
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  t_trade_sendPayment(custNum);
-                },
-                child: Text('보류중인 이더 보내기'),
-              ),
             ),
           ],
         ),
