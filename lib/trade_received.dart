@@ -149,10 +149,19 @@ class _TradePage_received extends State<TradePage_received> {
       if (response.statusCode == 200) {
         setState(() {
           result = "Payment made successfully: ${response.body}";
+          showErrorDialog('보류 중인 이더를 받았습니다.');
         });
-      } else if (response.statusCode == 501) {
+      } else if (response.statusCode == 400) {
         setState(() {
-          showErrorDialog('이미 받은 이더입니다.');
+          showErrorDialog('이 거래는 신고되어 보류 중인 이더 입니다.');
+        });
+      } else if (response.statusCode == 401) {
+        setState(() {
+          showErrorDialog('아직 보류 기간이 끝나지 않았습니다.');
+        });
+      } else if (response.statusCode == 402) {
+        setState(() {
+          showErrorDialog('이미 받은 이더 입니다.');
         });
       } else {
         setState(() {

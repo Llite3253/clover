@@ -215,105 +215,105 @@ class _TradePage_view extends State<TradePage_view> {
         ],
       ),
       body: FutureBuilder<void>(
-        future: _tradeViewPostsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('오류 발생: ${snapshot.error}'),
-            );
-          } else {
-            print(snapshot);
-            return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  amous == 'Y'
-                  ? const Text(
-                    '작성자 : 익명',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ) : FutureBuilder<String>(
-                          future: custNumFind(v_custNum!),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const SizedBox(
-                                height: 12,
-                                width: 12,
-                                child: CircularProgressIndicator(strokeWidth: 1),
-                              );
-                            } else if (snapshot.hasError) {
-                              return const Text(
-                                '오류',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.red,
-                                ),
-                              );
-                            } else {
-                              return Text(
-                                '작성자 : ${snapshot.data}' ?? '오류',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                ),
-                              );
-                            }
-                          },
+          future: _tradeViewPostsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('오류 발생: ${snapshot.error}'),
+              );
+            } else {
+              print(snapshot);
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      amous == 'Y'
+                          ? const Text(
+                        '작성자 : 익명',
+                        style: TextStyle(
+                          fontSize: 18,
                         ),
-                  SizedBox(height: 10),
-                  Text(
-                    '${_extractTime(rdate!)}',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    '${title}',
-                    style: const TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Text(
-                    '상품명 : ${name}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
-                    '가격 : ${price} ETH',
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Text(
-                    '${content}',
-                    style: const TextStyle(
-                        fontSize: 18,
-                    ),
-                  ),
-                  if (image1 != null && image1!.isNotEmpty)
-                    Container(
-                      width: 400, // 원하는 너비
-                      height: 400, // 원하는 높이
-                      child: Image.network(
-                        '${API.host}/$image1',
-                        fit: BoxFit.cover,
+                      ) : FutureBuilder<String>(
+                        future: custNumFind(v_custNum!),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const SizedBox(
+                              height: 12,
+                              width: 12,
+                              child: CircularProgressIndicator(strokeWidth: 1),
+                            );
+                          } else if (snapshot.hasError) {
+                            return const Text(
+                              '오류',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.red,
+                              ),
+                            );
+                          } else {
+                            return Text(
+                              '작성자 : ${snapshot.data}' ?? '오류',
+                              style: const TextStyle(
+                                fontSize: 18,
+                              ),
+                            );
+                          }
+                        },
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 10),
+                      Text(
+                        '${_extractTime(rdate!)}',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        '${title}',
+                        style: const TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        '상품명 : ${name}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        '가격 : ${price} ETH',
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        '${content}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      if (image1 != null && image1!.isNotEmpty)
+                        Container(
+                          width: 400, // 원하는 너비
+                          height: 400, // 원하는 높이
+                          child: Image.network(
+                            '${API.host}/$image1',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            );
+              );
+            }
           }
-        }
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(

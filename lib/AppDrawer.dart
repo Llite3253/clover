@@ -42,30 +42,30 @@ class AppDrawer extends StatelessWidget {
               Navigator.pushReplacementNamed (context, '/comunity');
             },
           ),
+          // ListTile(
+          //   title: const Text('예약'),
+          //   onTap: () {
+          //     Navigator.pushReplacementNamed (context, '/reserve');
+          //   },
+          // ),
+          // ListTile(
+          //   title: const Text('블록체인 test'),
+          //   onTap: () {
+          //     Navigator.pushReplacementNamed (context, '/block');
+          //   },
+          // ),
           ListTile(
-            title: const Text('예약'),
-            onTap: () {
-              Navigator.pushReplacementNamed (context, '/reserve');
-            },
-          ),
-          ListTile(
-            title: const Text('블록체인 test'),
-            onTap: () {
-              Navigator.pushReplacementNamed (context, '/block');
-            },
-          ),
-          ListTile(
-            title: const Text('블록체인 마이페이지'),
+            title: const Text('마이페이지'),
             onTap: () {
               Navigator.pushReplacementNamed (context, '/block_mypage');
             },
           ),
-          ListTile(
-            title: const Text('결제 내역'),
-            onTap: () {
-              Navigator.pushReplacementNamed (context, '/payment');
-            },
-          ),
+          // ListTile(
+          //   title: const Text('결제 내역'),
+          //   onTap: () {
+          //     Navigator.pushReplacementNamed (context, '/payment');
+          //   },
+          // ),
         ],
       ),
     );

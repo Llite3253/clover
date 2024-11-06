@@ -148,7 +148,7 @@ class _TradePage_sent extends State<TradePage_sent> {
       );
       if (response.statusCode == 200) {
         setState(() {
-          result = "Payment made successfully: ${response.body}";
+          showErrorDialog('이더를 보냈습니다.');
         });
       } else if (response.statusCode == 500) {
         setState(() {
@@ -156,6 +156,41 @@ class _TradePage_sent extends State<TradePage_sent> {
         });
       } else {
         setState(() {
+          result = "Failed to make payment: ${response.body}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        result = "Error: $e";
+      });
+    }
+  }
+
+  Future<void> holdPayment(int custNum) async {
+    try {
+      final response = await http.post(
+        Uri.parse(API.host + '/holdPayment'),
+        body: jsonEncode({
+          'custNum': custNum,
+          'payerAddress' : ethereumAddress,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        setState(() {
+          showErrorDialog('신고되었습니다.');
+        });
+      } else if (response.statusCode == 400) {
+        setState(() {
+          showErrorDialog('이미 신고되어 보류 중인 이더입니다.');
+        });
+      } else if (response.statusCode == 402) {
+        setState(() {
+          showErrorDialog('보류 중인 이더가 없습니다.');
+        });
+      } else {
+        setState(() {
+          showErrorDialog('다시 시도해주세요.');
           result = "Failed to make payment: ${response.body}";
         });
       }
@@ -320,7 +355,7 @@ class _TradePage_sent extends State<TradePage_sent> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        showErrorDialog("신고가 접수되었습니다.");
+                        holdPayment(custNum);
                       },
                       child: Text('신고'),
                     ),
